@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prode Mundial 2026</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #ffffff; --bg2: #f5f5f3; --bg3: #ededea;
+    --text: #1a1a18; --text2: #5f5e5a; --text3: #888780;
+    --border: rgba(0,0,0,0.12); --border2: rgba(0,0,0,0.22);
+    --green: #0F6E56; --green-bg: #E1F5EE; --green-text: #085041;
+    --red: #A32D2D; --red-bg: #FCEBEB; --red-text: #791F1F;
+    --blue: #185FA5; --blue-bg: #E6F1FB; --blue-text: #0C447C;
+    --amber: #BA7517; --amber-bg: #FAEEDA; --amber-text: #633806;
+    --radius: 8px; --radius-lg: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a18; --bg2: #2c2c2a; --bg3: #222220;
+      --text: #f0efe8; --text2: #b4b2a9; --text3: #888780;
+      --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.2);
+      --green: #5DCAA5; --green-bg: #04342C; --green-text: #9FE1CB;
+      --red: #F09595; --red-bg: #501313; --red-text: #F7C1C1;
+      --blue: #85B7EB; --blue-bg: #042C53; --blue-text: #B5D4F4;
+      --amber: #EF9F27; --amber-bg: #412402; --amber-text: #FAC775;
+    }
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg3); color: var(--text); min-height: 100vh; }
+  .container { max-width: 680px; margin: 0 auto; padding: 16px; }
+  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 8px; }
+  .header h1 { font-size: 20px; font-weight: 600; }
+  .badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+  .badge-admin { background: var(--blue-bg); color: var(--blue-text); }
+  .badge-locked { background: var(--red-bg); color: var(--red-text); }
+  .badge-open { background: var(--green-bg); color: var(--green-text); }
+  .tabs { display: flex; gap: 4px; background: var(--bg2); border-radius: var(--radius); padding: 4px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { flex: 1; padding: 7px 12px; border-radius: 6px; border: none; background: transparent; font-size: 14px; cursor: pointer; color: var(--text2); font-family: inherit; transition: all 0.15s; white-space: nowrap; }
+  .tab.active { background: var(--bg); color: var(--text); font-weight: 500; border: 0.5px solid var(--border); }
+  .section { display: none; }
+  .section.active { display: block; }
+  .card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 16px 20px; margin-bottom: 12px; }
+  .card-title { font-size: 11px; font-weight: 600; color: var(--text3); margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .grupo-label { font-size: 13px; font-weight: 500; color: var(--text2); margin: 14px 0 8px; padding: 4px 10px; background: var(--bg2); border-radius: var(--radius); }
+  .partido { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: center; padding: 10px 0; border-bottom: 0.5px solid var(--border); }
+  .partido:last-child { border-bottom: none; padding-bottom: 0; }
+  .team { font-size: 13px; color: var(--text); line-height: 1.3; }
+  .team.right { text-align: right; }
+  .score-col { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .real-score { font-size: 15px; font-weight: 600; color: var(--text); }
+  .score-inputs { display: flex; align-items: center; gap: 4px; }
+  .score-inputs input { width: 38px; height: 34px; text-align: center; font-size: 15px; font-weight: 600; border: 0.5px solid var(--border2); border-radius: var(--radius); background: var(--bg2); color: var(--text); font-family: inherit; -moz-appearance: textfield; }
+  .score-inputs input::-webkit-outer-spin-button, .score-inputs input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .score-inputs input:disabled { opacity: 0.45; }
+  .score-sep { color: var(--text3); font-size: 14px; }
+  .pts-badge { font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 20px; }
+  .pts-3 { background: var(--blue-bg); color: var(--blue-text); }
+  .pts-1 { background: var(--green-bg); color: var(--green-text); }
+  .pts-0 { background: var(--bg2); color: var(--text3); }
+  .btn { padding: 7px 16px; border-radius: var(--radius); border: 0.5px solid var(--border2); background: transparent; cursor: pointer; font-size: 14px; font-family: inherit; color: var(--text); transition: all 0.15s; }
+  .btn:hover { background: var(--bg2); }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .btn-primary:hover { opacity: 0.82; }
+  .btn-danger { color: var(--red); border-color: var(--red); }
+  .btn-danger:hover { background: var(--red-bg); }
+  .btn-success { color: var(--green); border-color: var(--green); }
+  .btn-success:hover { background: var(--green-bg); }
+  .btn-sm { padding: 4px 10px; font-size: 12px; }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .row label { font-size: 14px; color: var(--text2); }
+  input[type=text], input[type=number], input[type=password], select {
+    padding: 7px 10px; border: 0.5px solid var(--border2); border-radius: var(--radius);
+    background: var(--bg); color: var(--text); font-size: 14px; font-family: inherit;
+  }
+  input[type=text]:focus, input[type=number]:focus, input[type=password]:focus, select:focus {
+    outline: none; border-color: var(--blue);
+  }
+  select { cursor: pointer; }
+  .empty { text-align: center; padding: 24px; color: var(--text3); font-size: 14px; }
+  .notice { font-size: 13px; color: var(--text2); padding: 10px 14px; background: var(--amber-bg); color: var(--amber-text); border-radius: var(--radius); margin-bottom: 12px; border: 0.5px solid var(--amber); }
+  .lock-bar { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--bg2); border-radius: var(--radius); margin-bottom: 14px; flex-wrap: wrap; }
+  .lock-bar span { flex: 1; font-size: 14px; color: var(--text2); min-width: 180px; }
+  .tabla-header { display: grid; grid-template-columns: 36px 1fr 52px 44px 44px; gap: 6px; padding: 6px 0 8px; border-bottom: 0.5px solid var(--border2); }
+  .tabla-header div { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.04em; }
+  .tabla-row { display: grid; grid-template-columns: 36px 1fr 52px 44px 44px; gap: 6px; align-items: center; padding: 9px 0; border-bottom: 0.5px solid var(--border); }
+  .tabla-row:last-child { border-bottom: none; }
+  .pos { text-align: center; font-size: 14px; font-weight: 600; }
+  .pts { text-align: center; font-size: 16px; font-weight: 700; color: var(--text); }
+  .stat { text-align: center; font-size: 13px; color: var(--text2); }
+  .player-name { font-size: 14px; font-weight: 500; }
+  .connecting { text-align: center; padding: 40px 20px; color: var(--text3); }
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--green); margin-right: 6px; }
+  .dot.off { background: var(--red); }
+  @media (max-width: 480px) {
+    .container { padding: 10px; }
+    .team { font-size: 12px; }
+    .tabla-header, .tabla-row { grid-template-columns: 28px 1fr 44px 36px 36px; gap: 4px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>⚽ Prode Mundial 2026</h1>
+    <div style="display:flex;gap:6px;align-items:center">
+      <span class="dot" id="conn-dot"></span>
+      <span id="user-badge" class="badge badge-admin" style="display:none"></span>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('pronosticos')">Mis pronósticos</button>
+    <button class="tab" onclick="showTab('tabla')">Tabla</button>
+    <button class="tab" id="tab-admin" onclick="showTab('admin')" style="display:none">Admin</button>
+  </div>
+
+  <!-- PRONOSTICOS -->
+  <div id="sec-pronosticos" class="section active">
+    <div class="row" style="margin-bottom:12px">
+      <label>Jugador:</label>
+      <select id="sel-jugador" style="flex:1">
+        <option value="">— Seleccioná tu nombre —</option>
+      </select>
+      <button class="btn" onclick="toggleAddJugador()">+ Nuevo</button>
+    </div>
+    <div id="add-jugador-form" style="display:none" class="card">
+      <div class="card-title">Registrarse</div>
+      <div class="row">
+        <input type="text" id="nuevo-nombre" placeholder="Tu nombre" style="flex:1" maxlength="30">
+        <button class="btn btn-primary" onclick="addJugador()">Agregar</button>
+        <button class="btn" onclick="toggleAddJugador()">Cancelar</button>
+      </div>
+      <div id="add-error" style="font-size:12px;color:var(--red);margin-top:6px;display:none"></div>
+    </div>
+    <div id="lock-notice" class="notice" style="display:none">
+      <i class="ti ti-lock"></i> Los pronósticos están cerrados. Ya no podés modificar tus picks.
+    </div>
+    <div id="pronosticos-container"></div>
+  </div>
+
+  <!-- TABLA -->
+  <div id="sec-tabla" class="section">
+    <div class="card">
+      <div class="card-title">Posiciones</div>
+      <div id="tabla-container"><div class="empty">Todavía no hay datos.</div></div>
+    </div>
+    <p style="font-size:12px;color:var(--text3);text-align:center;margin-top:8px">
+      <strong>3 pts</strong> score exacto &nbsp;·&nbsp; <strong>1 pt</strong> resultado (1-X-2) correcto
+    </p>
+  </div>
+
+  <!-- ADMIN -->
+  <div id="sec-admin" class="section">
+    <div id="admin-login" class="card" style="max-width:340px;margin:0 auto">
+      <div class="card-title">Acceso admin</div>
+      <div class="row" style="flex-direction:column;align-items:stretch;gap:10px">
+        <input type="password" id="admin-pass" placeholder="Contraseña" onkeydown="if(event.key==='Enter')loginAdmin()">
+        <button class="btn btn-primary" onclick="loginAdmin()">Ingresar</button>
+        <div id="login-err" style="font-size:12px;color:var(--red);display:none"></div>
+        <p style="font-size:12px;color:var(--text3)">Contraseña por defecto: <code>admin123</code></p>
+      </div>
+    </div>
+    <div id="admin-panel" style="display:none">
+      <div class="lock-bar">
+        <i class="ti ti-lock-open" id="lock-icon" style="font-size:20px;color:var(--text2)"></i>
+        <span id="lock-label">Pronósticos <strong>abiertos</strong></span>
+        <button class="btn btn-danger btn-sm" id="btn-lock" onclick="toggleLock()">Cerrar pronósticos</button>
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title">Cargar resultado real</div>
+        <div class="row">
+          <select id="sel-partido" style="flex:1;min-width:180px">
+            <option value="">— Seleccioná partido —</option>
+          </select>
+          <input type="number" id="res-local" min="0" max="20" placeholder="L" style="width:52px;text-align:center">
+          <span style="color:var(--text3)">-</span>
+          <input type="number" id="res-visit" min="0" max="20" placeholder="V" style="width:52px;text-align:center">
+          <button class="btn btn-primary btn-sm" onclick="cargarResultado()">Guardar</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Resultados cargados</div>
+        <div id="resultados-lista"><div class="empty">Ninguno todavía.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const PARTIDOS = [
+  {id:'gA1',g:'Grupo A',l:'México',v:'Polonia'},
+  {id:'gA2',g:'Grupo A',l:'Arabia Saudita',v:'Argentina'},
+  {id:'gA3',g:'Grupo A',l:'Polonia',v:'Arabia Saudita'},
+  {id:'gA4',g:'Grupo A',l:'Argentina',v:'México'},
+  {id:'gA5',g:'Grupo A',l:'Arabia Saudita',v:'México'},
+  {id:'gA6',g:'Grupo A',l:'Argentina',v:'Polonia'},
+  {id:'gB1',g:'Grupo B',l:'Gales',v:'Irán'},
+  {id:'gB2',g:'Grupo B',l:'EEUU',v:'Inglaterra'},
+  {id:'gB3',g:'Grupo B',l:'Gales',v:'EEUU'},
+  {id:'gB4',g:'Grupo B',l:'Inglaterra',v:'Irán'},
+  {id:'gB5',g:'Grupo B',l:'Gales',v:'Inglaterra'},
+  {id:'gB6',g:'Grupo B',l:'Irán',v:'EEUU'},
+  {id:'gC1',g:'Grupo C',l:'Qatar',v:'Ecuador'},
+  {id:'gC2',g:'Grupo C',l:'Senegal',v:'Países Bajos'},
+  {id:'gC3',g:'Grupo C',l:'Qatar',v:'Senegal'},
+  {id:'gC4',g:'Grupo C',l:'Ecuador',v:'Países Bajos'},
+  {id:'gC5',g:'Grupo C',l:'Qatar',v:'Países Bajos'},
+  {id:'gC6',g:'Grupo C',l:'Ecuador',v:'Senegal'},
+  {id:'gD1',g:'Grupo D',l:'Dinamarca',v:'Túnez'},
+  {id:'gD2',g:'Grupo D',l:'Francia',v:'Australia'},
+  {id:'gD3',g:'Grupo D',l:'Australia',v:'Túnez'},
+  {id:'gD4',g:'Grupo D',l:'Francia',v:'Dinamarca'},
+  {id:'gD5',g:'Grupo D',l:'Túnez',v:'Francia'},
+  {id:'gD6',g:'Grupo D',l:'Australia',v:'Dinamarca'},
+  {id:'gE1',g:'Grupo E',l:'Alemania',v:'Japón'},
+  {id:'gE2',g:'Grupo E',l:'España',v:'Costa Rica'},
+  {id:'gE3',g:'Grupo E',l:'Japón',v:'Costa Rica'},
+  {id:'gE4',g:'Grupo E',l:'España',v:'Alemaniia'},
+  {id:'gE5',g:'Grupo E',l:'Japón',v:'España'},
+  {id:'gE6',g:'Grupo E',l:'Costa Rica',v:'Alemania'},
+  {id:'gF1',g:'Grupo F',l:'Bélgica',v:'Canadá'},
+  {id:'gF2',g:'Grupo F',l:'Marruecos',v:'Croacia'},
+  {id:'gF3',g:'Grupo F',l:'Bélgica',v:'Marruecos'},
+  {id:'gF4',g:'Grupo F',l:'Croacia',v:'Canadá'},
+  {id:'gF5',g:'Grupo F',l:'Bélgica',v:'Croacia'},
+  {id:'gF6',g:'Grupo F',l:'Canadá',v:'Marruecos'},
+  {id:'gG1',g:'Grupo G',l:'Brasil',v:'Serbia'},
+  {id:'gG2',g:'Grupo G',l:'Suiza',v:'Camerún'},
+  {id:'gG3',g:'Grupo G',l:'Brasil',v:'Suiza'},
+  {id:'gG4',g:'Grupo G',l:'Camerún',v:'Serbia'},
+  {id:'gG5',g:'Grupo G',l:'Camerún',v:'Brasil'},
+  {id:'gG6',g:'Grupo G',l:'Serbia',v:'Suiza'},
+  {id:'gH1',g:'Grupo H',l:'Uruguay',v:'Corea del Sur'},
+  {id:'gH2',g:'Grupo H',l:'Portugal',v:'Ghana'},
+  {id:'gH3',g:'Grupo H',l:'Corea del Sur',v:'Ghana'},
+  {id:'gH4',g:'Grupo H',l:'Portugal',v:'Uruguay'},
+  {id:'gH5',g:'Grupo H',l:'Ghana',v:'Uruguay'},
+  {id:'gH6',g:'Grupo H',l:'Corea del Sur',v:'Portugal'},
+  {id:'r16_1',g:'Octavos',l:'1A',v:'2B'},{id:'r16_2',g:'Octavos',l:'1C',v:'2D'},
+  {id:'r16_3',g:'Octavos',l:'1E',v:'2F'},{id:'r16_4',g:'Octavos',l:'1G',v:'2H'},
+  {id:'r16_5',g:'Octavos',l:'1B',v:'2A'},{id:'r16_6',g:'Octavos',l:'1D',v:'2C'},
+  {id:'r16_7',g:'Octavos',l:'1F',v:'2E'},{id:'r16_8',g:'Octavos',l:'1H',v:'2G'},
+  {id:'qf1',g:'Cuartos',l:'G R16-1',v:'G R16-2'},{id:'qf2',g:'Cuartos',l:'G R16-3',v:'G R16-4'},
+  {id:'qf3',g:'Cuartos',l:'G R16-5',v:'G R16-6'},{id:'qf4',g:'Cuartos',l:'G R16-7',v:'G R16-8'},
+  {id:'sf1',g:'Semis',l:'G QF1',v:'G QF2'},{id:'sf2',g:'Semis',l:'G QF3',v:'G QF4'},
+  {id:'tp',g:'Tercer puesto',l:'Perdedor SF1',v:'Perdedor SF2'},
+  {id:'final',g:'Final',l:'Ganador SF1',v:'Ganador SF2'},
+];
+
+let state = { jugadores:[], pronosticos:{}, resultados:{}, locked:false };
+let adminPass = null;
+
+function calcPts(pred, real) {
+  const pl=parseInt(pred.local), pv=parseInt(pred.visit);
+  const rl=parseInt(real.local), rv=parseInt(real.visit);
+  if(isNaN(pl)||isNaN(pv)) return 0;
+  if(pl===rl && pv===rv) return 3;
+  const sp = pl>pv?1:pl<pv?-1:0;
+  const sr = rl>rv?1:rl<rv?-1:0;
+  return sp===sr ? 1 : 0;
+}
+
+function applyState(data) {
+  state = data;
+  refreshAll();
+}
+
+function refreshAll() {
+  refreshJugadorSelect();
+  renderPronosticos();
+  if(document.getElementById('sec-tabla').classList.contains('active')) renderTabla();
+  if(adminPass) { renderAdminResultados(); updateLockUI(); }
+  document.getElementById('lock-notice').style.display = state.locked ? 'block' : 'none';
+}
+
+// SSE connection
+function connectSSE() {
+  const dot = document.getElementById('conn-dot');
+  const es = new EventSource('/api/events');
+  es.onopen = () => { dot.classList.remove('off'); };
+  es.onmessage = e => { try { applyState(JSON.parse(e.data)); } catch(_){} };
+  es.onerror = () => { dot.classList.add('off'); setTimeout(connectSSE, 3000); es.close(); };
+}
+
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('sec-'+name).classList.add('active');
+  document.querySelectorAll('.tab').forEach(t => {
+    if(t.getAttribute('onclick') && t.getAttribute('onclick').includes(name)) t.classList.add('active');
+  });
+  if(name==='tabla') renderTabla();
+  if(name==='pronosticos') renderPronosticos();
+}
+
+function toggleAddJugador() {
+  const f = document.getElementById('add-jugador-form');
+  f.style.display = f.style.display==='none' ? 'block' : 'none';
+  if(f.style.display==='block') document.getElementById('nuevo-nombre').focus();
+}
+
+async function addJugador() {
+  const nombre = document.getElementById('nuevo-nombre').value.trim();
+  const errEl = document.getElementById('add-error');
+  if(!nombre) return;
+  const res = await fetch('/api/jugadores', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({nombre})
+  });
+  if(res.ok) {
+    document.getElementById('nuevo-nombre').value = '';
+    document.getElementById('add-jugador-form').style.display = 'none';
+    errEl.style.display = 'none';
+    await fetchState();
+    document.getElementById('sel-jugador').value = nombre;
+    renderPronosticos();
+  } else {
+    const d = await res.json();
+    errEl.textContent = d.error || 'Error';
+    errEl.style.display = 'block';
+  }
+}
+
+function refreshJugadorSelect() {
+  const sel = document.getElementById('sel-jugador');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">— Seleccioná tu nombre —</option>';
+  state.jugadores.forEach(j => {
+    const o = document.createElement('option');
+    o.value = j; o.textContent = j; sel.appendChild(o);
+  });
+  if(cur) sel.value = cur;
+}
+
+function getJugador() { return document.getElementById('sel-jugador').value; }
+
+function renderPronosticos() {
+  const jugador = getJugador();
+  const c = document.getElementById('pronosticos-container');
+  if(!jugador) { c.innerHTML = '<div class="empty">Seleccioná tu nombre para ver tus pronósticos.</div>'; return; }
+  const grupos = [...new Set(PARTIDOS.map(p=>p.g))];
+  let html = '';
+  grupos.forEach(grupo => {
+    const pts = PARTIDOS.filter(p=>p.g===grupo);
+    html += `<div class="grupo-label">${grupo}</div><div class="card">`;
+    pts.forEach(p => {
+      const pred = (state.pronosticos[jugador]&&state.pronosticos[jugador][p.id]) || {local:'',visit:''};
+      const res = state.resultados[p.id];
+      const dis = state.locked ? 'disabled' : '';
+      let ptsBadge = '';
+      if(res!==undefined && pred.local!=='' && pred.visit!=='') {
+        const n = calcPts(pred, res);
+        ptsBadge = n===3 ? '<span class="pts-badge pts-3">+3 pts</span>' :
+                   n===1 ? '<span class="pts-badge pts-1">+1 pt</span>' :
+                            '<span class="pts-badge pts-0">0 pts</span>';
+      }
+      html += `<div class="partido">
+        <div class="team right">${p.l}</div>
+        <div class="score-col">
+          ${res!==undefined ? `<div class="real-score">${res.local}-${res.visit}</div>` : ''}
+          <div class="score-inputs">
+            <input type="number" min="0" max="20" value="${pred.local}" ${dis}
+              onchange="saveProno('${jugador}','${p.id}','local',this.value)"
+              oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+            <span class="score-sep">-</span>
+            <input type="number" min="0" max="20" value="${pred.visit}" ${dis}
+              onchange="saveProno('${jugador}','${p.id}','visit',this.value)"
+              oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+          </div>
+          ${ptsBadge ? `<div>${ptsBadge}</div>` : ''}
+        </div>
+        <div class="team">${p.v}</div>
+      </div>`;
+    });
+    html += '</div>';
+  });
+  c.innerHTML = html;
+}
+
+async function saveProno(jugador, partidoId, lado, valor) {
+  if(state.locked) return;
+  await fetch('/api/pronosticos', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({jugador, partidoId, lado, valor: valor===''?'':parseInt(valor)})
+  });
+}
+
+function renderTabla() {
+  const c = document.getElementById('tabla-container');
+  if(!state.jugadores.length) { c.innerHTML='<div class="empty">No hay jugadores todavía.</div>'; return; }
+  const datos = state.jugadores.map(j => {
+    let pts=0,ex=0,par=0;
+    PARTIDOS.forEach(p => {
+      const res=state.resultados[p.id];
+      const pred=state.pronosticos[j]&&state.pronosticos[j][p.id];
+      if(res!==undefined&&pred&&pred.local!==''&&pred.visit!==''){
+        const n=calcPts(pred,res); pts+=n;
+        if(n===3)ex++; else if(n===1)par++;
+      }
+    });
+    return {j,pts,ex,par};
+  }).sort((a,b)=>b.pts-a.pts||b.ex-a.ex);
+  const medals=['🥇','🥈','🥉'];
+  let html=`<div class="tabla-header"><div style="text-align:center">#</div><div>Jugador</div><div style="text-align:center">Pts</div><div style="text-align:center" title="Score exacto">⚽⚽</div><div style="text-align:center" title="1X2 ok">⚽</div></div>`;
+  datos.forEach((d,i)=>{
+    html+=`<div class="tabla-row">
+      <div class="pos">${medals[i]||i+1}</div>
+      <div class="player-name">${d.j}</div>
+      <div class="pts">${d.pts}</div>
+      <div class="stat">${d.ex}</div>
+      <div class="stat">${d.par}</div>
+    </div>`;
+  });
+  c.innerHTML=html;
+}
+
+async function loginAdmin() {
+  const pass = document.getElementById('admin-pass').value;
+  const res = await fetch('/api/lock', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({pass})
+  });
+  if(res.status===401) {
+    const errEl = document.getElementById('login-err');
+    errEl.textContent='Contraseña incorrecta.'; errEl.style.display='block';
+    return;
+  }
+  // revert the lock toggle we just triggered
+  await fetch('/api/lock', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({pass})
+  });
+  adminPass = pass;
+  document.getElementById('admin-login').style.display='none';
+  document.getElementById('admin-panel').style.display='block';
+  document.getElementById('tab-admin').style.display='';
+  document.getElementById('user-badge').textContent='Admin';
+  document.getElementById('user-badge').style.display='';
+  renderAdminSelect();
+  renderAdminResultados();
+  updateLockUI();
+  await fetchState();
+}
+
+function renderAdminSelect() {
+  const sel = document.getElementById('sel-partido');
+  sel.innerHTML='<option value="">— Seleccioná partido —</option>';
+  PARTIDOS.forEach(p=>{
+    const o=document.createElement('option');
+    o.value=p.id; o.textContent=`${p.l} vs ${p.v} (${p.g})`; sel.appendChild(o);
+  });
+}
+
+async function cargarResultado() {
+  const pid=document.getElementById('sel-partido').value;
+  const lo=document.getElementById('res-local').value;
+  const vi=document.getElementById('res-visit').value;
+  if(!pid||lo===''||vi===''){alert('Completá todos los campos.');return;}
+  await fetch('/api/resultados',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({pass:adminPass,partidoId:pid,local:parseInt(lo),visit:parseInt(vi)})
+  });
+  document.getElementById('res-local').value='';
+  document.getElementById('res-visit').value='';
+}
+
+function renderAdminResultados() {
+  const c=document.getElementById('resultados-lista');
+  const con=PARTIDOS.filter(p=>state.resultados[p.id]!==undefined);
+  if(!con.length){c.innerHTML='<div class="empty">Ninguno todavía.</div>';return;}
+  let html='';
+  con.forEach(p=>{
+    const r=state.resultados[p.id];
+    html+=`<div class="partido">
+      <div class="team right" style="font-size:13px">${p.l}</div>
+      <div class="score-col">
+        <div class="real-score">${r.local}-${r.visit}</div>
+        <div style="font-size:11px;color:var(--text3)">${p.g}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="team" style="font-size:13px">${p.v}</div>
+        <button class="btn btn-danger btn-sm" onclick="borrarResultado('${p.id}')"><i class="ti ti-trash"></i></button>
+      </div>
+    </div>`;
+  });
+  c.innerHTML=html;
+}
+
+async function borrarResultado(id) {
+  await fetch(`/api/resultados/${id}`,{
+    method:'DELETE',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({pass:adminPass})
+  });
+}
+
+async function toggleLock() {
+  await fetch('/api/lock',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({pass:adminPass})
+  });
+}
+
+function updateLockUI() {
+  const icon=document.getElementById('lock-icon');
+  const label=document.getElementById('lock-label');
+  const btn=document.getElementById('btn-lock');
+  if(state.locked){
+    icon.className='ti ti-lock'; icon.style.color='var(--red)';
+    label.innerHTML='Pronósticos <strong>cerrados</strong>';
+    btn.textContent='Abrir pronósticos'; btn.className='btn btn-success btn-sm';
+  } else {
+    icon.className='ti ti-lock-open'; icon.style.color='var(--text2)';
+    label.innerHTML='Pronósticos <strong>abiertos</strong>';
+    btn.textContent='Cerrar pronósticos'; btn.className='btn btn-danger btn-sm';
+  }
+}
+
+async function fetchState() {
+  const res=await fetch('/api/state');
+  const data=await res.json();
+  applyState(data);
+}
+
+document.getElementById('sel-jugador').addEventListener('change', renderPronosticos);
+
+connectSSE();
+fetchState();
+</script>
+</body>
+</html>
