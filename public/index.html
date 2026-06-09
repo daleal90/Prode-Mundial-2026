@@ -105,9 +105,14 @@
 <div class="container">
   <div class="header">
     <h1>⚽ Prode Mundial 2026</h1>
-    <div style="display:flex;gap:6px;align-items:center">
+    <div style="display:flex;gap:8px;align-items:center">
       <span class="dot" id="conn-dot"></span>
       <span id="user-badge" class="badge badge-admin" style="display:none"></span>
+      <button id="btn-admin-acceso" onclick="showTab('admin')" title="Acceso admin"
+        style="background:transparent;border:none;cursor:pointer;padding:4px 6px;border-radius:var(--radius);color:var(--text3);font-size:18px;line-height:1;transition:color 0.15s"
+        onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text3)'">
+        <i class="ti ti-settings"></i>
+      </button>
     </div>
   </div>
 
@@ -437,6 +442,7 @@ async function loginAdmin() {
   document.getElementById('admin-login').style.display='none';
   document.getElementById('admin-panel').style.display='block';
   document.getElementById('tab-admin').style.display='';
+  document.getElementById('btn-admin-acceso').style.display='none';
   document.getElementById('user-badge').textContent='Admin';
   document.getElementById('user-badge').style.display='';
   renderAdminSelect();
